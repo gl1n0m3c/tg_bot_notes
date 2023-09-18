@@ -10,18 +10,18 @@ offset = timedelta(hours=3)
 tz = timezone(offset = offset, name = 'МСК')
 BASE = Executions(PATH)
 name_of_month = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'нояб', 'дек']
-months = {'янв': {'num': 1, 'days': 31},
-          'фев': {'num': 2, 'days': 28 + int(isleap(datetime.now().year))},
-          'мар': {'num': 3, 'days': 31},
-          'апр': {'num': 4, 'days': 30},
-          'май': {'num': 5, 'days': 31},
-          'июн': {'num': 6, 'days': 30},
-          'июл': {'num': 7, 'days': 31},
-          'авг': {'num': 8, 'days': 31},
-          'сен': {'num': 9, 'days': 30},
-          'окт': {'num': 10, 'days': 31},
-          'нояб': {'num': 11, 'days': 30},
-          'дек': {'num': 12, 'days': 31}}
+months = {'янв': {'num': '01', 'days': 31},
+          'фев': {'num': '02', 'days': 28 + int(isleap(datetime.now().year))},
+          'мар': {'num': '03', 'days': 31},
+          'апр': {'num': '04', 'days': 30},
+          'май': {'num': '05', 'days': 31},
+          'июн': {'num': '06', 'days': 30},
+          'июл': {'num': '07', 'days': 31},
+          'авг': {'num': '08', 'days': 31},
+          'сен': {'num': '09', 'days': 30},
+          'окт': {'num': '10', 'days': 31},
+          'нояб': {'num': '11', 'days': 30},
+          'дек': {'num': '12', 'days': 31}}
 
 
 def all_notes() -> str:

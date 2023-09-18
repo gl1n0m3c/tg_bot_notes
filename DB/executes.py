@@ -7,10 +7,10 @@ class Executions:
         self.bdname = path
 
         
-    def insert_data(self, value1, value2) -> None:
+    def insert_data(self, value1, value2, remind_constantly: int = False) -> None:
         with sq.connect(self.bdname) as con:
             cur = con.cursor()
-            cur.execute(f'''INSERT INTO notes (date, text) VALUES ('{value1}', '{value2}');''')
+            cur.execute(f'''INSERT INTO notes (date, text, remind_constantly) VALUES ('{value1}', '{value2}', '{remind_constantly}');''')
     
 
     def give_all_data(self) -> tuple:
@@ -46,5 +46,6 @@ class Executions:
             cur.execute("""CREATE TABLE IF NOT EXISTS notes(
                     number INTEGER PRIMARY KEY AUTOINCREMENT,
                     date DATETIME,
-                    text TEXT
+                    text TEXT,
+                    remind_constantly BIT 
                     )""")
