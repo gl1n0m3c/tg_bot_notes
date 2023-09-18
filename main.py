@@ -6,11 +6,7 @@ from aiogram.types import Message
 from functions import *
 import time
 
-# from keep_alive import keep_alive
 
-
-
-# keep_alive()
 
 dp   = Dispatcher()
 BASE = Executions(PATH)
