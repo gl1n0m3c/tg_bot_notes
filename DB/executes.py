@@ -6,8 +6,8 @@ class Executions:
     def __init__(self, path) -> None:
         self.bdname = path
 
-        
-    def insert_data(self, value1, value2, remind_constantly: int = False) -> None:
+
+    def insert_data(self, value1, value2, remind_constantly: int = 0) -> None:
         with sq.connect(self.bdname) as con:
             cur = con.cursor()
             cur.execute(f'''INSERT INTO notes (date, text, remind_constantly) VALUES ('{value1}', '{value2}', '{remind_constantly}');''')

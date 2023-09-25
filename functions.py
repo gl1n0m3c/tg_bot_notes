@@ -37,7 +37,7 @@ def all_notes() -> str:
         return f'Вот список всех ваших заметок:\n{TEXT}\n'
 
 
-def save_note(mes) -> int:
+def save_note(mes: list, permanent: bool = False) -> int:
     try:
         datetime.strptime(f'{datetime.now().year}-{months[mes[1]]["num"]}-{mes[0]} {mes[2]}:00', "%Y-%m-%d %H:%M:%S")
     
@@ -55,7 +55,10 @@ def save_note(mes) -> int:
             for el in mes[3:]:
                 text += (el + ' ')
 
-        BASE.insert_data(date, text)
+        if permanent == False:
+            BASE.insert_data(date, text)
+        else:
+            BASE.insert_data(date, text, 1)
         return 1
 
 
@@ -77,9 +80,10 @@ def del_note(num):  # можно оформить через binsearch
 
 def nearest_note():
     note = BASE.give_nearest_note()
-    date = note[1]
     if len(note) == 0:
         return 'Вы еще не добавили никаких заметок!'
+    note = note[0]
+    date = note[1]
     text = 'Ближайшее событие:\n' + \
           f'Уникальный номер: <b>{note[0]}</b>. Дата: <b>{date[8:10]} {name_of_month[int(date[5:7]) - 1]} {date[11:16]}</b>; Заметка: <b>{note[2]}</b>\n'
     return text
@@ -101,14 +105,25 @@ def make_buttons(value: list):
 def need_to_remind():
     note = BASE.give_nearest_note()
     if len(note) != 0:
-      note = note[0]
-      while note[1][:16] < str(datetime.now(tz=tz))[:16]:
-          del_note(int(note[0]))
-          note = BASE.give_nearest_note()
-  
-      if note[1][:16] == str(datetime.now(tz=tz))[:16]:
-          del_note(int(note[0]))
-          return note[2]
+        note = note[0]
+
+        while note[1][:16] < str(datetime.now(tz=tz))[:16]:
+            del_note(int(note[0]))
+            note = BASE.give_nearest_note()
+            if len(note) == 0:
+                break
+            note = note[0]
+
+        if len(note) != 0:
+            if note[1][:16] == str(datetime.now(tz=tz))[:16]:
+                if note[3] == 0:
+                    del_note(int(note[0]))
+                else:
+                    date = datetime.now() + timedelta(days=1)
+                    date = str(date)[:-7]
+                    print(f'{date[8:10]} {name_of_month[int(date[5:7]) - 1]} {date[11:16]} {note[2]}')
+                    save_note((f'{date[8:10]} {name_of_month[int(date[5:7]) - 1]} {date[11:16]} {note[2]}').split(), True)
+                return note[2]
     return 0
 
 

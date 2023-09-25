@@ -15,7 +15,8 @@ BASE.check_bd_existing()
 SAVE_FLAG          = False
 DELETE_FLAG        = False
 COULD_USE_DEL_FLAG = False
-keyboard = make_buttons(['/save_note', '/nearest_note', '/all_notes', '/start', '/help'])
+PERMANENT_SAVE     = False
+keyboard = make_buttons(['/save_note', '/save_note_permanently' , '/nearest_note', '/all_notes', '/start', '/help'])
 little_board = make_buttons(['/start', '/delete_note'])
 bot = Bot(token=TOKEN)
 
@@ -23,6 +24,8 @@ bot = Bot(token=TOKEN)
 async def START() -> None:
     try:
         await dp.start_polling(bot)
+    except Exception as ex:
+        print(ex)
     finally: 
         await bot.session.close()
 
@@ -41,6 +44,7 @@ async def get_message(message: Message):
     global SAVE_FLAG
     global DELETE_FLAG
     global COULD_USE_DEL_FLAG
+    global PERMANENT_SAVE
     
 
     if message.text == '/start':
@@ -58,6 +62,7 @@ async def get_message(message: Message):
         COULD_USE_DEL_FLAG = True
         SAVE_FLAG          = False
         DELETE_FLAG        = False
+        PERMANENT_SAVE     = False
 
 
     elif message.text == '/help':
@@ -81,6 +86,16 @@ async def get_message(message: Message):
         SAVE_FLAG          = True
         DELETE_FLAG        = False
         COULD_USE_DEL_FLAG = False
+        PERMANENT_SAVE     = False
+    
+
+    elif message.text == '/save_note_permanently':
+        await message.answer('Напишите заметку в формате <число> <месяц> <время через двоеточие> <текст_заметки>\n' + \
+                             'За более подробной информацией воспользуйтесь /help.')
+        SAVE_FLAG          = True
+        DELETE_FLAG        = False
+        COULD_USE_DEL_FLAG = False
+        PERMANENT_SAVE     = True
         
 
     elif message.text == '/delete_note' and COULD_USE_DEL_FLAG == True:
@@ -88,6 +103,7 @@ async def get_message(message: Message):
         SAVE_FLAG          = False
         DELETE_FLAG        = True
         COULD_USE_DEL_FLAG = False
+        PERMANENT_SAVE     = False
     
     
     elif message.text == '/delete_note' and COULD_USE_DEL_FLAG == False:
@@ -95,17 +111,22 @@ async def get_message(message: Message):
         SAVE_FLAG          = False
         DELETE_FLAG        = False
         COULD_USE_DEL_FLAG = False
+        PERMANENT_SAVE     = False
         
 
     else:
         if SAVE_FLAG == True:
             mes = message.text.split()
-            answer = save_note(mes)
+            if PERMANENT_SAVE == False:
+                answer = save_note(mes)
+            else:
+                answer = save_note(mes, PERMANENT_SAVE)
             if answer == 0:
                 await message.reply("Дата введена в неверном формате, повторите попытку снова:")
             else:
                 await message.answer("Заметка сохранена!", reply_markup = keyboard)
-                SAVE_FLAG = False
+                SAVE_FLAG      = False
+                PERMANENT_SAVE = False
         
         
         elif DELETE_FLAG == True:
@@ -134,8 +155,8 @@ async def murge():
     main = create_task(START())
     while True:
         try:
-            await main
             await checker
+            await main
         except:
             time.sleep(10)
 
