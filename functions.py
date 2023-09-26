@@ -45,6 +45,9 @@ def save_note(mes: list, permanent: bool = False) -> int:
         return 0
     
     else:
+        if len(mes[2]) == 4:
+            mes[2] = '0' + mes[2]
+            
         year = datetime.now(tz=tz).year
         date = f'{year}-{months[mes[1]]["num"]}-{mes[0]} {mes[2]}:00'
         if date < str(datetime.now(tz=tz)):
